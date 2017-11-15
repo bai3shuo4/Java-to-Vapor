@@ -1,18 +1,29 @@
-const vmt_A
- :A.run
+const vmt_Fac
+ :Fac.ComputeFac
 func Main()
 t.0 = HeapAllocZ(4)
-[t.0] = :vmt_A
-if t.0 goto :null1
+[t.0] = :vmt_Fac
+if t.0 goto :null0
 	Error("null pointer")
-null1:
+null0:
 t.1 = [t.0]
 t.1 = [t.1+0]
 t.2 = call t.1(t.0)
 PrintIntS(t.2)
 ret
-func A.run(this)
-t.0 = 42
-PrintIntS(t.0)
-t.1 = 99
-ret t.1
+func Fac.ComputeFac(this)
+t.0 = 3
+t.1 = 1
+t.2 = LtS(t.0 t.1)
+if1 t.2 goto :if1_else
+t.3 = 1
+num_aux = t.3
+goto :if1_end
+if1_else:
+t.4 = 3
+t.5 = 5
+t.6 = Muls(t.4 t.5)
+num_aux = t.6
+if1_end:
+t.7 = num_aux
+ret t.7

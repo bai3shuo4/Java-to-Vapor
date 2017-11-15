@@ -10,9 +10,11 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	LinkedList<String> method_list;
 	String curr_classname;
 	Integer lable;
+	Integer if_lable;
 
 	public SecondVisit(HashMap<String, HashMap<String, LinkedList<String>>> class_list){
 		this.class_list = class_list;
+		if_lable = 0;
 	}
 
 	public Integer visit(Goal g){
@@ -80,6 +82,41 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		return tmp;
 	}
 
+	public Integer visit(AssignmentStatement as){
+		Integer tmp = as.f2.accept(this);
+		System.out.println(as.f0.f0.toString() + " = " + "t." + tmp.toString());												//class may be wrong????
+
+		return null;
+	}
+
+	public Integer visit(IfStatement is){
+		Integer tmp = is.f2.accept(this);
+
+		System.out.println("if" + if_lable.toString() + " t." + tmp.toString() + " goto :if" + if_lable.toString() + "_else");
+		//System.out.print("	");
+		is.f4.accept(this);
+		System.out.println("goto :if" + if_lable.toString() + "_end");
+		System.out.println("if" + if_lable.toString() + "_else:");
+		is.f6.accept(this);
+		System.out.println("if" + if_lable.toString() + "_end:");
+
+		if_lable = if_lable + 1;
+		return null;
+	}
+
+	public Integer visit(CompareExpression ce){
+		Integer tmp1 = ce.f0.accept(this);
+		Integer tmp2 = ce.f2.accept(this);
+
+		System.out.println("t." + lable.toString() + " = " + "LtS(t." + tmp1.toString() + " " + "t." + tmp2.toString() + ")");
+
+		Integer tmp = lable;
+		lable = lable + 1;
+		return tmp;
+	}
+
+
+
 	public Integer visit(Expression e){
 
 		Integer tmp = e.f0.accept(this);
@@ -94,7 +131,9 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 		System.out.println("t." + lable.toString() + " = " + "Add(" + "t." + tmp1.toString() + " " + "t." + tmp2.toString() + ")");
 
-		return lable;
+		Integer tmp = lable;
+		lable = lable + 1;
+		return tmp;
 	}
 
 	public Integer visit(MinusExpression me){
@@ -104,7 +143,9 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 		System.out.println("t." + lable.toString() + " = " + "Sub(" + "t." + tmp1.toString() + " " + "t." + tmp2.toString() + ")");
 
-		return lable;
+		Integer tmp = lable;
+		lable = lable + 1;
+		return tmp;
 	}
 
 	public Integer visit(TimesExpression te){
@@ -114,7 +155,9 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 		System.out.println("t." + lable.toString() + " = " + "Muls(" + "t." + tmp1.toString() + " " + "t." + tmp2.toString() + ")");
 
-		return lable;
+		Integer tmp = lable;
+		lable = lable + 1;
+		return tmp;
 	}
 
 	public Integer visit(MessageSend ms){
@@ -131,6 +174,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		System.out.println("t." + lable.toString() + " = " + "call t." + method_lable.toString() + "(t." + tmp1.toString() + ")");
 
 		Integer tmp = lable;
+		lable = lable + 1;
 		return tmp;
 		
 		//Integer tmp2 = ms.f2.accept(this);
@@ -154,9 +198,14 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 		System.out.println("t." + lable.toString() + " = " + "HeapAllocZ(" + Integer.toString(size) + ")");
 		System.out.println("[t." + lable.toString() + "] = :" + "vmt_" + class_name);
-		System.out.println("if t." + lable.toString() + " goto :null" + (++lable).toString());
+
+		System.out.println("if t." + lable.toString() + " goto :null" + (if_lable).toString());							//if_lable
+
 		System.out.println("	Error(\"null pointer\")");
-		System.out.println("null" + lable.toString() + ":");
+		System.out.println("null" + (if_lable).toString() + ":");
+
+		if_lable = if_lable + 1;
+		lable = lable + 1;
 		return tmp;
 	}
 
@@ -165,6 +214,20 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		Integer tmp = lable;
 
 		System.out.println("t." + lable.toString() + " = " + il.f0.toString());
+
+		lable = lable + 1;
+		return tmp;
+	}
+
+	public Integer visit(Identifier i){
+
+		/////////////////////
+		//if map has identifier another treat
+		////////////////////
+
+		Integer tmp = lable;
+
+		System.out.println("t." + lable.toString() + " = " + i.f0.toString());
 
 		lable = lable + 1;
 		return tmp;
