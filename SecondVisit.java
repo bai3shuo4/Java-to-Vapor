@@ -8,6 +8,8 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	HashMap<String, HashMap<String, LinkedList<String>>> class_list;
 	HashMap<String, LinkedList<String>> class_map;
 	LinkedList<String> method_list;
+
+
 	String curr_classname;
 	Integer lable;
 	Integer if_lable;
@@ -92,7 +94,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	public Integer visit(IfStatement is){
 		Integer tmp = is.f2.accept(this);
 
-		System.out.println("if" + if_lable.toString() + " t." + tmp.toString() + " goto :if" + if_lable.toString() + "_else");
+		System.out.println("if0" + " t." + tmp.toString() + " goto :if" + if_lable.toString() + "_else");
 		//System.out.print("	");
 		is.f4.accept(this);
 		System.out.println("goto :if" + if_lable.toString() + "_end");
@@ -153,7 +155,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		Integer tmp1 = te.f0.accept(this);
 		Integer tmp2 = te.f2.accept(this);
 
-		System.out.println("t." + lable.toString() + " = " + "Muls(" + "t." + tmp1.toString() + " " + "t." + tmp2.toString() + ")");
+		System.out.println("t." + lable.toString() + " = " + "MulS(" + "t." + tmp1.toString() + " " + "t." + tmp2.toString() + ")");
 
 		Integer tmp = lable;
 		lable = lable + 1;
@@ -223,6 +225,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 		/////////////////////
 		//if map has identifier another treat
+		//should be departed into classmap and method map////
 		////////////////////
 
 		Integer tmp = lable;
