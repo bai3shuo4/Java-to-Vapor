@@ -21,6 +21,9 @@ public class J2V extends GJNoArguDepthFirst<String>{
 				for(String st: tmp_method)
 					System.out.println(" "+ ":" + s + "." + st);
 			}
+
+			SecondVisit sv = new SecondVisit(map);
+			g.accept(sv);
 		}
 
 		catch(Exception e){
