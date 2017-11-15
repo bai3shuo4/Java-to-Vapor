@@ -14,9 +14,12 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	Integer lable;
 	Integer if_lable;
 
+	boolean call_function;
+
 	public SecondVisit(HashMap<String, HashMap<String, LinkedList<String>>> class_list){
 		this.class_list = class_list;
 		if_lable = 0;
+		call_function = false;
 	}
 
 	public Integer visit(Goal g){
@@ -49,10 +52,31 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 	public Integer visit(MethodDeclaration md){
 		lable = 0;
-		System.out.println("func" + " " + curr_classname + "." + md.f2.f0.toString() + "(this)");
+		System.out.print("func" + " " + curr_classname + "." + md.f2.f0.toString() + "(this ");
+		md.f4.accept(this);
+		System.out.print(")");
+		System.out.println();
+
 		md.f8.accept(this);
+
 		System.out.println("ret" + " " + "t." + md.f10.accept(this).toString());
 
+		return null;
+	}
+
+	public Integer visit(FormalParameterList fp){
+		fp.f0.accept(this);
+		fp.f1.accept(this);
+		return null;
+	}
+
+	public Integer visit(FormalParameter fp){
+		System.out.print(fp.f1.f0.toString() + " ");
+		return null;
+	}
+
+	public Integer visit(FormalParameterRest fp){
+		fp.f1.accept(this);
 		return null;
 	}
 
@@ -168,18 +192,38 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		String method = ms.f2.f0.toString();
 
 		int index = method_list.indexOf(method);
+		call_function = true;
 
 		System.out.println("t." + lable.toString() + " = " + "[" + "t." + tmp1.toString() + "]");
 		System.out.println("t." + lable.toString() + " = " + "[" + "t." + lable.toString() + "+" + Integer.toString(index) + "]");
 		Integer method_lable = lable;
 		lable = lable + 1;
-		System.out.println("t." + lable.toString() + " = " + "call t." + method_lable.toString() + "(t." + tmp1.toString() + ")");
+		System.out.print("t." + lable.toString() + " = " + "call t." + method_lable.toString() + "(t." + tmp1.toString() + " ");
+		ms.f4.accept(this);
+		System.out.print(")");
+		System.out.println();
 
+		call_function = false;
 		Integer tmp = lable;
 		lable = lable + 1;
 		return tmp;
 		
 		//Integer tmp2 = ms.f2.accept(this);
+	}
+
+	public Integer visit(ExpressionList el){
+
+		//if(call_function){
+			el.f0.accept(this);
+			el.f1.accept(this);
+			return null;
+		//}
+	}
+
+	public Integer visit(ExpressionRest er){
+
+		er.f1.accept(this);
+		return null;
 	}
 
 
@@ -213,12 +257,20 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 	public Integer visit(IntegerLiteral il){
 
-		Integer tmp = lable;
+		if(call_function){
+			System.out.print(il.f0.toString() + " ");
+			return null;
+		}
 
-		System.out.println("t." + lable.toString() + " = " + il.f0.toString());
+		else{
+			Integer tmp = lable;
 
-		lable = lable + 1;
-		return tmp;
+			System.out.println("t." + lable.toString() + " = " + il.f0.toString());
+
+			lable = lable + 1;
+
+			return tmp;
+		}
 	}
 
 	public Integer visit(Identifier i){
@@ -227,13 +279,19 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		//if map has identifier another treat
 		//should be departed into classmap and method map////
 		////////////////////
+		if(call_function){
+			System.out.print(i.f0.toString() + " ");
+			return null;
+		}
 
-		Integer tmp = lable;
+		else{
+			Integer tmp = lable;
 
-		System.out.println("t." + lable.toString() + " = " + i.f0.toString());
+			System.out.println("t." + lable.toString() + " = " + i.f0.toString());
 
-		lable = lable + 1;
-		return tmp;
+			lable = lable + 1;
+			return tmp;
+		}
 	}
 
 
