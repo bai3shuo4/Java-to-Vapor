@@ -6,6 +6,8 @@ import visitor.*;
 public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 	HashMap<String, HashMap<String, LinkedList<String>>> class_list;
+	HashMap<String, LinkedList<String>> class_map;
+	LinkedList<String> method_list;
 	Integer lable;
 
 	public SecondVisit(HashMap<String, HashMap<String, LinkedList<String>>> class_list){
@@ -28,6 +30,13 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 		System.out.println("ret");
 
+		return null;
+
+	}
+
+	public Integer visit(Statement s){
+
+		s.f0.accept(this);
 		return null;
 
 	}
@@ -75,6 +84,25 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		return lable;
 	}
 
+	public Integer visit(MessageSend ms){
+
+		Integer tmp1 = ms.f0.accept(this);								//t.0
+		String method = ms.f2.f0.toString();
+
+		int index = method_list.indexOf(method);
+
+		System.out.println("t." + lable.toString() + " = " + "[" + "t." + tmp1.toString() + "]");
+		System.out.println("t." + lable.toString() + " = " + "[" + "t." + lable.toString() + "+" + Integer.toString(index) + "]");
+		Integer method_lable = lable;
+		lable = lable + 1;
+		System.out.println("t." + lable.toString() + " = " + "call t." + method_lable.toString() + "(t." + tmp1.toString() + ")");
+
+		Integer tmp = lable;
+		return tmp;
+		
+		//Integer tmp2 = ms.f2.accept(this);
+	}
+
 
 
 	public Integer visit(PrimaryExpression pe){
@@ -83,10 +111,28 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		return tmp;
 	}
 
+	public Integer visit(AllocationExpression ae){
+		Integer tmp = lable;										//class lable
+		String class_name = ae.f1.f0.toString();
+		class_map = class_list.get(class_name);
+		int size = class_map.size() * 4;
+
+		method_list = class_map.get(class_name + "virtual table");
+
+		System.out.println("t." + lable.toString() + " = " + "HeapAllocZ(" + Integer.toString(size) + ")");
+		System.out.println("[t." + lable.toString() + "] = :" + "vmt_" + class_name);
+		System.out.println("if t." + lable.toString() + " goto :null" + (++lable).toString());
+		System.out.println("	Error(\"null pointer\")");
+		System.out.println("null" + lable.toString() + ":");
+		return tmp;
+	}
+
 	public Integer visit(IntegerLiteral il){
 
 		Integer tmp = lable;
+
 		System.out.println("t." + lable.toString() + " = " + il.f0.toString());
+
 		lable = lable + 1;
 		return tmp;
 	}
