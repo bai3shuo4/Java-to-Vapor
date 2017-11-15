@@ -11,3 +11,8 @@ t.1 = [t.1+0]
 t.2 = call t.1(t.0)
 PrintIntS(t.2)
 ret
+func A.run(this)
+t.0 = 42
+PrintIntS(t.0)
+t.1 = 99
+ret t.1

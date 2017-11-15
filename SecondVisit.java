@@ -8,6 +8,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	HashMap<String, HashMap<String, LinkedList<String>>> class_list;
 	HashMap<String, LinkedList<String>> class_map;
 	LinkedList<String> method_list;
+	String curr_classname;
 	Integer lable;
 
 	public SecondVisit(HashMap<String, HashMap<String, LinkedList<String>>> class_list){
@@ -17,8 +18,40 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	public Integer visit(Goal g){
 
 		g.f0.accept(this);
+		g.f1.accept(this);
+
 		return null;
 	}
+
+	public Integer visit(TypeDeclaration td){
+
+		td.f0.accept(this);
+
+		return null;
+	}
+
+	public Integer visit(ClassDeclaration cd){
+
+		curr_classname = cd.f1.f0.toString();
+		//class_map = class_list.get(class_name);
+		//method_list = class_map.get(class_name + "virtual table");
+
+		cd.f4.accept(this);
+		//lable = 0;
+
+		return null;
+
+	}
+
+	public Integer visit(MethodDeclaration md){
+		lable = 0;
+		System.out.println("func" + " " + curr_classname + "." + md.f2.f0.toString() + "(this)");
+		md.f8.accept(this);
+		System.out.println("ret" + " " + "t." + md.f10.accept(this).toString());
+
+		return null;
+	}
+
 
 	public Integer visit(MainClass mc){
 
