@@ -11,6 +11,7 @@ class Fac {
             num_aux = x ;
         else
             num_aux = y * z ;
+        System.out.println(num_aux);
         return num_aux ;
     }
 }
