@@ -32,6 +32,6 @@ t.10 = MulS(t.4 t.9)
 num_aux = t.10
 if1_end:
 t.11 = num_aux
-x = t.11
-t.12 = x
+[this + 4] = t.11
+t.12 = [this + 4]
 ret t.12

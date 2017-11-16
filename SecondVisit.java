@@ -10,6 +10,8 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	LinkedList<String> method_list;
 	LinkedList<String> parameter_list;
 
+	HashMap<String, HashMap<String, LinkedList<String>>> inner_class_list;
+	HashMap<String, LinkedList<String>> inner_class_map;
 
 	String curr_classname;
 	Integer lable;
@@ -17,9 +19,11 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 	boolean call_function;
 	boolean inner_call;
+	boolean inner_classt;
 
 	public SecondVisit(HashMap<String, HashMap<String, LinkedList<String>>> class_list){
 		this.class_list = class_list;
+		this.inner_class_list = class_list;
 		if_lable = 0;
 		call_function = false;
 		inner_call = false;
@@ -43,7 +47,9 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	public Integer visit(ClassDeclaration cd){
 
 		curr_classname = cd.f1.f0.toString();
-		//class_map = class_list.get(class_name);
+
+		inner_class_map = new HashMap<>();
+		inner_class_map = inner_class_list.get(curr_classname);
 		//method_list = class_map.get(class_name + "virtual table");
 
 		cd.f4.accept(this);
@@ -113,6 +119,15 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 	public Integer visit(AssignmentStatement as){
 		Integer tmp = as.f2.accept(this);
+
+		if(!inner_class_map.isEmpty() && inner_class_map.containsKey(as.f0.f0.toString())){
+			LinkedList<String> value_list = new LinkedList<>();
+			value_list = inner_class_map.get(as.f0.f0.toString());
+			String value = value_list.get(0);
+			Integer index = Integer.valueOf(value)*4;
+			System.out.println("[this + " + index.toString() + "] = t." + tmp.toString());
+			return null;
+		}
 		System.out.println(as.f0.f0.toString() + " = " + "t." + tmp.toString());												//class may be wrong????
 
 		return null;
@@ -335,7 +350,19 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		//}
 
 		//else{
-			Integer tmp = lable;
+		Integer tmp = lable;
+
+		if(!inner_class_map.isEmpty() && inner_class_map.containsKey(i.f0.toString())){
+			LinkedList<String> value_list = new LinkedList<>();
+			value_list = inner_class_map.get(i.f0.toString());
+			String value = value_list.get(0);
+			Integer index = Integer.valueOf(value)*4;
+			System.out.println("t." + lable.toString() + " = " + "[this + " + index.toString() + "]");
+
+			lable = lable + 1;
+			return tmp;
+		}
+			
 
 			System.out.println("t." + lable.toString() + " = " + i.f0.toString());
 

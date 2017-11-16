@@ -8,6 +8,8 @@ public class FirstVisit extends GJNoArguDepthFirst<LinkedList<String>>{
 	private HashMap<String, HashMap<String, LinkedList<String>>> class_list;
 	private LinkedList<String> list_method;
 	private HashMap<String, LinkedList<String>> class_map;
+
+	private Integer value_number;
 	//private HashMap<String, LinkedList<String>> class_map;
 
 	public FirstVisit(HashMap<String, HashMap<String, LinkedList<String>>> class_list){//, HashMap<String, LinkedList<String>> class_map){
@@ -41,6 +43,8 @@ public class FirstVisit extends GJNoArguDepthFirst<LinkedList<String>>{
 
 		class_map.put(cd.f1.f0.toString()+"virtual table", list_method);
 
+		value_number = 1;
+
 		cd.f3.accept(this);
 
 		class_list.put(cd.f1.f0.toString(), class_map);
@@ -58,8 +62,13 @@ public class FirstVisit extends GJNoArguDepthFirst<LinkedList<String>>{
 	public LinkedList<String> visit(VarDeclaration vd){
 
 		LinkedList<String> list = new LinkedList<>();
-		list.add(vd.f1.f0.toString());
+
+		list.add(value_number.toString());
+
+		value_number = value_number + 1;
+
 		class_map.put(vd.f1.f0.toString(),list);
+		
 		return null;
 	}
 }  

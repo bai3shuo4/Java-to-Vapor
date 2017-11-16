@@ -1,17 +1,19 @@
 class Factorial{
     public static void main(String[] a){
-        System.out.println(new Fac().ComputeFac(1,2,3));
+        System.out.println(new Fac().ComputeFac());
     }
 }
 
 class Fac {
-    public int ComputeFac(int x, int y, int z){
+    int x;
+    public int ComputeFac(){
         int num_aux;
         if (3 < 1)
-            num_aux = x ;
+            num_aux = 1 ;
         else
-            num_aux = y * z ;
-        System.out.println(num_aux);
-        return num_aux ;
+            num_aux = 3 * 5 ;
+        x = num_aux;
+        x = x + 1;
+        return x ;
     }
 }
