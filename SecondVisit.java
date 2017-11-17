@@ -16,6 +16,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	String curr_classname;
 	Integer lable;
 	Integer if_lable;
+	Integer while_lable;
 
 	boolean call_function;
 	boolean inner_call;
@@ -25,6 +26,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		this.class_list = class_list;
 		this.inner_class_list = class_list;
 		if_lable = 0;
+		while_lable = 0;
 		call_function = false;
 		inner_call = false;
 	}
@@ -145,6 +147,19 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		System.out.println("if" + if_lable.toString() + "_end:");
 
 		if_lable = if_lable + 1;
+		return null;
+	}
+
+	public Integer visit(WhileStatement ws){
+
+		System.out.println("while" + while_lable.toString() + "_top:");
+		Integer tmp = ws.f2.accept(this);
+		System.out.println("if0 t." + tmp.toString() + " goto :while" + while_lable.toString() + "_end");
+		ws.f4.accept(this);
+		System.out.println("goto :while" + while_lable.toString() + "_top");
+		System.out.println("while" + while_lable.toString() + "_end:");
+
+		while_lable = while_lable + 1;
 		return null;
 	}
 

@@ -8,12 +8,9 @@ class Fac {
     int x;
     public int ComputeFac(){
         int num_aux;
-        if (3 < 1)
-            num_aux = 1 ;
-        else
-            num_aux = 3 * 5 ;
-        x = num_aux;
-        x = x + 1;
-        return x ;
+        num_aux = 1;
+
+        while(num_aux < 5){num_aux = num_aux + 1;}
+        return num_aux ;
     }
 }
