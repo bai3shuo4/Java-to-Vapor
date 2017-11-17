@@ -1,6 +1,42 @@
+const vmt_Fac
+ :Fac.ComputeFac
 func Main()
-t.0 = 12
-t.1 = 21
-t.2 = Add(t.0 t.1)
+t.0 = HeapAllocZ(8)
+[t.0] = :vmt_Fac
+if t.0 goto :null0
+	Error("null pointer")
+null0:
+t.1 = [t.0]
+t.1 = [t.1+0]
+t.2 = call t.1(t.0 )
 PrintIntS(t.2)
 ret
+func Fac.ComputeFac(this )
+t.0 = 1
+num_aux = t.0
+t.1 = 1
+t1 = t.1
+t.2 = 0
+t2 = t.2
+t.3 = t1
+if0 t.3 goto :ss0_else
+t.4 = t2
+goto :ss0_end
+ss0_else:
+t.4 = 0
+ss0_end:
+t1 = t.4
+t.5 = t1
+t.6 = Sub(1 t.5)
+if0 t.6 goto :if1_else
+t.7 = num_aux
+t.8 = 1
+t.9 = Add(t.7 t.8)
+num_aux = t.9
+goto :if1_end
+if1_else:
+t.10 = num_aux
+num_aux = t.10
+if1_end:
+t.11 = num_aux
+ret t.11

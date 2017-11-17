@@ -17,6 +17,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	Integer lable;
 	Integer if_lable;
 	Integer while_lable;
+	Integer ss_lable;
 
 	boolean call_function;
 	boolean inner_call;
@@ -27,6 +28,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		this.inner_class_list = class_list;
 		if_lable = 0;
 		while_lable = 0;
+		ss_lable = 0;
 		call_function = false;
 		inner_call = false;
 	}
@@ -226,6 +228,35 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		return tmp;
 	}
 
+	public Integer visit(AndExpression ae){
+
+		Integer tmp1 = ae.f0.accept(this);
+
+		System.out.println("if0 t." + tmp1.toString() + " goto :ss" + ss_lable.toString() + "_else");
+
+		Integer tmp2 = ae.f2.accept(this);
+
+		System.out.println("goto :ss" + ss_lable.toString() + "_end");
+
+		System.out.println("ss" + ss_lable.toString() + "_else:");
+
+		System.out.println("t." + tmp2.toString() + " = 0");
+
+		System.out.println("ss" + ss_lable.toString() + "_end:");
+
+		return tmp2;
+	}
+
+	public Integer visit(NotExpression ne){
+
+		Integer tmp1 = ne.f1.accept(this);
+
+		System.out.println("t." + lable.toString() + " = " + "Sub(1 " + "t." + tmp1.toString() + ")");
+		Integer tmp = lable;
+		lable = lable + 1;
+		return tmp;
+	}
+
 	public Integer visit(MessageSend ms){
 		Integer tmp1 = ms.f0.accept(this);
 
@@ -343,14 +374,34 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		//}
 
 		//else{
-			Integer tmp = lable;
+		Integer tmp = lable;
 
-			System.out.println("t." + lable.toString() + " = " + il.f0.toString());
+		System.out.println("t." + lable.toString() + " = " + il.f0.toString());
 
-			lable = lable + 1;
+		lable = lable + 1;
 
-			return tmp;
+		return tmp;
 		//}
+	}
+
+	public Integer visit(TrueLiteral tl){
+		Integer tmp = lable;
+
+		System.out.println("t." + lable.toString() + " = 1" );
+
+		lable = lable + 1;
+
+		return tmp;
+	}
+
+	public Integer visit(FalseLiteral fl){
+		Integer tmp = lable;
+
+		System.out.println("t." + lable.toString() + " = 0" );
+
+		lable = lable + 1;
+
+		return tmp;
 	}
 
 	public Integer visit(Identifier i){

@@ -8,9 +8,20 @@ class Fac {
     int x;
     public int ComputeFac(){
         int num_aux;
-        num_aux = 1;
+        boolean t1;
+        boolean t2;
 
-        while(num_aux < 5){num_aux = num_aux + 1;}
+        //t= true && false;
+        num_aux = 1;
+        t1 = true;
+        t2 = false;
+
+        t1 = t1 && t2;
+        if(!t1){
+            num_aux = num_aux + 1;}
+        else{
+            num_aux = num_aux;
+        }
         return num_aux ;
     }
 }
