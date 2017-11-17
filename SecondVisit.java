@@ -19,6 +19,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	Integer if_lable;
 	Integer while_lable;
 	Integer ss_lable;
+	Integer bound_lable;
 
 	boolean call_function;
 	boolean inner_call;
@@ -31,6 +32,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		if_lable = 0;
 		while_lable = 0;
 		ss_lable = 0;
+		bound_lable = 0;
 		call_function = false;
 		inner_call = false;
 	}
@@ -139,6 +141,50 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		return null;
 	}
 
+	public Integer visit(ArrayAssignmentStatement as){
+		Integer tmp = as.f2.accept(this);
+		Integer tmp1 = as.f5.accept(this);
+
+		if(!inner_class_map.isEmpty() && inner_class_map.containsKey(as.f0.f0.toString())){
+			LinkedList<String> value_list = new LinkedList<>();
+			value_list = inner_class_map.get(as.f0.f0.toString());
+			String value = value_list.get(0);
+			Integer index = Integer.valueOf(value)*4;
+
+			Integer tmp_array = lable;
+			System.out.println("t." + tmp_array.toString() + " = " + "[this + " + index.toString() + "]");
+			lable = lable + 1;
+			System.out.println("t." + lable.toString() + " = " + "[t." + tmp_array.toString() + "]");
+			System.out.println("t." + lable.toString() + " = " + "Lt(t." + tmp.toString() + " t." + lable.toString() + ")");
+			System.out.println("if t." + lable.toString() + " goto :bounds" + bound_lable.toString());
+			System.out.println("Error(\"array index out of bounds\")");
+			System.out.println("bounds" + bound_lable.toString() + ":");
+			bound_lable = bound_lable + 1;
+			System.out.println("t." + lable.toString() + " = MulS(t." + tmp.toString() + " 4)");
+			System.out.println("t." + lable.toString() + " = Add(t." + lable.toString() + " t." + tmp_array.toString() + ")");
+			System.out.println("[t." + lable.toString() + "+4] = t." + tmp1.toString());
+			lable = lable + 1;
+
+			return null;
+		}
+
+		//System.out.println(as.f0.f0.toString() + " = " + "t." + tmp.toString());
+		Integer tmp_array = lable;
+		System.out.println("t." + tmp_array.toString() + " = " + as.f0.f0.toString());
+		lable = lable + 1;
+		System.out.println("t." + lable.toString() + " = " + "[t." + tmp_array.toString() + "]");
+		System.out.println("t." + lable.toString() + " = " + "Lt(t." + tmp.toString() + " t." + lable.toString() + ")");
+		System.out.println("if t." + lable.toString() + " goto :bounds" + bound_lable.toString());
+		System.out.println("Error(\"array index out of bounds\")");
+		System.out.println("bounds" + bound_lable.toString() + ":");
+		bound_lable = bound_lable + 1;
+		System.out.println("t." + lable.toString() + " = MulS(t." + tmp.toString() + " 4)");
+		System.out.println("t." + lable.toString() + " = Add(t." + lable.toString() + " t." + tmp_array.toString() + ")");
+		System.out.println("[t." + lable.toString() + "+4] = t." + tmp1.toString());
+		lable = lable + 1;
+		return null;
+	}
+
 	public Integer visit(IfStatement is){
 		Integer tmp = is.f2.accept(this);
 		Integer curr_lable = if_lable;
@@ -176,6 +222,14 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 		System.out.println("t." + lable.toString() + " = " + "LtS(t." + tmp1.toString() + " " + "t." + tmp2.toString() + ")");
 
+		Integer tmp = lable;
+		lable = lable + 1;
+		return tmp;
+	}
+
+	public Integer visit(ArrayAllocationExpression ae){
+		Integer tmp1 = ae.f3.accept(this);
+		System.out.println("t." + lable.toString() + " = call :AllocArray(t." + tmp1.toString() + ")");
 		Integer tmp = lable;
 		lable = lable + 1;
 		return tmp;
@@ -455,6 +509,31 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 			lable = lable + 1;
 			return tmp;
 		//}
+	}
+
+	public Integer visit(ArrayLookup al){
+		Integer tmp1 = al.f0.accept(this);
+		Integer tmp2 = al.f2.accept(this);
+
+		System.out.println("t." + lable.toString() + " = " + "[t." + tmp1.toString() + "]");
+		System.out.println("t." + lable.toString() + " = " + "Lt(t." + tmp2.toString() + " t." + lable.toString() + ")");
+		System.out.println("if t." + lable.toString() + " goto :bounds" + bound_lable.toString());
+		System.out.println("Error(\"array index out of bounds\")");
+		System.out.println("bounds" + bound_lable.toString() + ":");
+
+		bound_lable = bound_lable + 1;
+
+		System.out.println("t." + lable.toString() + " = MulS(t." + tmp2.toString() + " 4)");
+		System.out.println("t." + lable.toString() + " = Add(t." + lable.toString() + " t." + tmp1.toString() + ")");
+
+		Integer tmp = lable;
+		lable = lable + 1;
+
+		System.out.println("t." + lable.toString() + " = [t." + tmp.toString() + "+4]");
+
+		tmp = lable;
+		lable = lable + 1;
+		return tmp;
 	}
 
 

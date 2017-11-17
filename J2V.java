@@ -24,6 +24,13 @@ public class J2V extends GJNoArguDepthFirst<String>{
 
 			SecondVisit sv = new SecondVisit(map);
 			g.accept(sv);
+
+			System.out.println("func AllocArray(size)");
+			System.out.println("bytes = MulS(size 4)");
+			System.out.println("bytes = Add(bytes 4)");
+			System.out.println("v = HeapAllocZ(bytes)");
+			System.out.println("[v] = size");
+			System.out.println("ret v");
 		}
 
 		catch(Exception e){
