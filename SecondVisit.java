@@ -15,6 +15,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 	String curr_classname;
 	Integer lable;
+	Integer null_lable;
 	Integer if_lable;
 	Integer while_lable;
 	Integer ss_lable;
@@ -26,6 +27,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	public SecondVisit(HashMap<String, HashMap<String, LinkedList<String>>> class_list){
 		this.class_list = class_list;
 		this.inner_class_list = class_list;
+		null_lable = 0;
 		if_lable = 0;
 		while_lable = 0;
 		ss_lable = 0;
@@ -139,29 +141,32 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 	public Integer visit(IfStatement is){
 		Integer tmp = is.f2.accept(this);
+		Integer curr_lable = if_lable;
+		if_lable = if_lable + 1;
 
-		System.out.println("if0" + " t." + tmp.toString() + " goto :if" + if_lable.toString() + "_else");
+		System.out.println("if0" + " t." + tmp.toString() + " goto :if" + curr_lable.toString() + "_else");
 		//System.out.print("	");
 		is.f4.accept(this);
-		System.out.println("goto :if" + if_lable.toString() + "_end");
-		System.out.println("if" + if_lable.toString() + "_else:");
+		System.out.println("goto :if" + curr_lable.toString() + "_end");
+		System.out.println("if" + curr_lable.toString() + "_else:");
 		is.f6.accept(this);
-		System.out.println("if" + if_lable.toString() + "_end:");
+		System.out.println("if" + curr_lable.toString() + "_end:");
 
-		if_lable = if_lable + 1;
 		return null;
 	}
 
 	public Integer visit(WhileStatement ws){
 
-		System.out.println("while" + while_lable.toString() + "_top:");
-		Integer tmp = ws.f2.accept(this);
-		System.out.println("if0 t." + tmp.toString() + " goto :while" + while_lable.toString() + "_end");
-		ws.f4.accept(this);
-		System.out.println("goto :while" + while_lable.toString() + "_top");
-		System.out.println("while" + while_lable.toString() + "_end:");
-
+		Integer curr_lable = while_lable;
 		while_lable = while_lable + 1;
+
+		System.out.println("while" + curr_lable.toString() + "_top:");
+		Integer tmp = ws.f2.accept(this);
+		System.out.println("if0 t." + tmp.toString() + " goto :while" + curr_lable.toString() + "_end");
+		ws.f4.accept(this);
+		System.out.println("goto :while" + curr_lable.toString() + "_top");
+		System.out.println("while" + curr_lable.toString() + "_end:");
+
 		return null;
 	}
 
@@ -232,17 +237,21 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 		Integer tmp1 = ae.f0.accept(this);
 
-		System.out.println("if0 t." + tmp1.toString() + " goto :ss" + ss_lable.toString() + "_else");
+		Integer curr_lable = ss_lable;
+
+		ss_lable = ss_lable + 1;
+
+		System.out.println("if0 t." + tmp1.toString() + " goto :ss" + curr_lable.toString() + "_else");
 
 		Integer tmp2 = ae.f2.accept(this);
 
-		System.out.println("goto :ss" + ss_lable.toString() + "_end");
+		System.out.println("goto :ss" + curr_lable.toString() + "_end");
 
-		System.out.println("ss" + ss_lable.toString() + "_else:");
+		System.out.println("ss" + curr_lable.toString() + "_else:");
 
 		System.out.println("t." + tmp2.toString() + " = 0");
 
-		System.out.println("ss" + ss_lable.toString() + "_end:");
+		System.out.println("ss" + curr_lable.toString() + "_end:");
 
 		return tmp2;
 	}
@@ -341,7 +350,13 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	public Integer visit(ThisExpression te){
 
 		inner_call = true; 
-		return null;
+
+		System.out.println("t." + lable.toString() + " = this");
+
+		Integer tmp = lable;
+		lable = lable + 1;
+
+		return tmp;
 	}
 
 	public Integer visit(AllocationExpression ae){
@@ -355,12 +370,12 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		System.out.println("t." + lable.toString() + " = " + "HeapAllocZ(" + Integer.toString(size) + ")");
 		System.out.println("[t." + lable.toString() + "] = :" + "vmt_" + class_name);
 
-		System.out.println("if t." + lable.toString() + " goto :null" + (if_lable).toString());							//if_lable
+		System.out.println("if t." + lable.toString() + " goto :null" + (null_lable).toString());							//if_lable
 
 		System.out.println("	Error(\"null pointer\")");
-		System.out.println("null" + (if_lable).toString() + ":");
+		System.out.println("null" + (null_lable).toString() + ":");
 
-		if_lable = if_lable + 1;
+		null_lable = null_lable + 1;
 
 		lable = lable + 1;
 		return tmp;
