@@ -267,20 +267,25 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	}
 
 	public Integer visit(MessageSend ms){
+		
+		call_function = true;
+
+		parameter_list = new LinkedList<>();
+		ms.f4.accept(this);		//read parameter
+
 		Integer tmp1 = ms.f0.accept(this);
 
 		if(inner_call){
 			String method = ms.f2.f0.toString();
 			int index = method_list.indexOf(method);
-			call_function = true;
+			
 
 			System.out.println("t." + lable.toString() + " = " + "[this]");
 			System.out.println("t." + lable.toString() + " = " + "[" + "t." + lable.toString() + "+" + Integer.toString(index*4) + "]");
 			Integer method_lable = lable;
 			lable = lable + 1;
 
-			parameter_list = new LinkedList<>();
-			ms.f4.accept(this);							//read parameter
+								
 			
 
 			System.out.print("t." + lable.toString() + " = " + "call t." + method_lable.toString() + "(this ");
@@ -299,15 +304,14 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		String method = ms.f2.f0.toString();
 
 		int index = method_list.indexOf(method);
-		call_function = true;
 
 		System.out.println("t." + lable.toString() + " = " + "[" + "t." + tmp1.toString() + "]");
 		System.out.println("t." + lable.toString() + " = " + "[" + "t." + lable.toString() + "+" + Integer.toString(index*4) + "]");
 		Integer method_lable = lable;
 		lable = lable + 1;
 
-		parameter_list = new LinkedList<>();
-		ms.f4.accept(this);							//read parameter
+		//parameter_list = new LinkedList<>();
+		//ms.f4.accept(this);							//read parameter
 		
 		System.out.print("t." + lable.toString() + " = " + "call t." + method_lable.toString() + "(t." + tmp1.toString() + " ");
 		for(String s : parameter_list) System.out.print(s + " ");
@@ -349,7 +353,8 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 	public Integer visit(ThisExpression te){
 
-		inner_call = true; 
+		if(call_function)
+			inner_call = true; 
 
 		System.out.println("t." + lable.toString() + " = this");
 
