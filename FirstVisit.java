@@ -52,6 +52,7 @@ public class FirstVisit extends GJNoArguDepthFirst<LinkedList<String>>{
 		return null;
 	}
 
+
 	public LinkedList<String> visit(MethodDeclaration md){
 
 		list_method.add(md.f2.f0.toString());
@@ -68,7 +69,7 @@ public class FirstVisit extends GJNoArguDepthFirst<LinkedList<String>>{
 		value_number = value_number + 1;
 
 		class_map.put(vd.f1.f0.toString(),list);
-		
+
 		return null;
 	}
 }  

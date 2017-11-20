@@ -13,7 +13,14 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	HashMap<String, HashMap<String, LinkedList<String>>> inner_class_list;
 	HashMap<String, LinkedList<String>> inner_class_map;
 
+	HashMap<String, String> base_map;
+	HashMap<String, String> function_map;
+	boolean fields_define;
+	boolean add_map;
+
+
 	String curr_classname;
+	String curr_parameter_name;
 	Integer lable;
 	Integer null_lable;
 	Integer if_lable;
@@ -35,6 +42,8 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		bound_lable = 0;
 		call_function = false;
 		inner_call = false;
+		add_map = false;
+		fields_define = false;
 	}
 
 	public Integer visit(Goal g){
@@ -54,11 +63,18 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 	public Integer visit(ClassDeclaration cd){
 
+
 		curr_classname = cd.f1.f0.toString();
 
 		inner_class_map = new HashMap<>();
 		inner_class_map = inner_class_list.get(curr_classname);
+
+		base_map = new HashMap<>();
+		base_map.put("this", curr_classname);
 		//method_list = class_map.get(class_name + "virtual table");
+		fields_define = true;
+		cd.f3.accept(this);
+		fields_define = false;
 
 		cd.f4.accept(this);
 		//lable = 0;
@@ -68,11 +84,18 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 	}
 
 	public Integer visit(MethodDeclaration md){
+
+		function_map = new HashMap<>();
+
 		lable = 0;
 		System.out.print("func" + " " + curr_classname + "." + md.f2.f0.toString() + "(this ");
 		md.f4.accept(this);
 		System.out.print(")");
 		System.out.println();
+
+		add_map = true;
+		md.f7.accept(this);
+		add_map = false;
 
 		md.f8.accept(this);
 
@@ -81,13 +104,32 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		return null;
 	}
 
+	public Integer visit(VarDeclaration vd){
+
+		if(fields_define){
+			curr_parameter_name = vd.f1.f0.toString();
+			vd.f0.accept(this);
+		}
+
+		if(add_map){
+			curr_parameter_name = vd.f1.f0.toString();
+			vd.f0.accept(this);
+		}
+
+		return null;
+	}
+
 	public Integer visit(FormalParameterList fp){
+		add_map = true;
 		fp.f0.accept(this);
 		fp.f1.accept(this);
+		add_map = false;
 		return null;
 	}
 
 	public Integer visit(FormalParameter fp){
+		curr_parameter_name = fp.f1.f0.toString();
+		fp.f0.accept(this);
 		System.out.print(fp.f1.f0.toString() + " ");
 		return null;
 	}
@@ -331,6 +373,7 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 		if(inner_call){
 			String method = ms.f2.f0.toString();
+
 			int index = method_list.indexOf(method);
 			
 
@@ -358,6 +401,8 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 		String method = ms.f2.f0.toString();
 
 		int index = method_list.indexOf(method);
+
+		//System.out.println("........." + index);
 
 		System.out.println("t." + lable.toString() + " = " + "[" + "t." + tmp1.toString() + "]");
 		System.out.println("t." + lable.toString() + " = " + "[" + "t." + lable.toString() + "+" + Integer.toString(index*4) + "]");
@@ -407,8 +452,12 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 	public Integer visit(ThisExpression te){
 
-		if(call_function)
+		if(call_function){
 			inner_call = true; 
+			String name = base_map.get("this");
+			class_map = class_list.get(name);
+			method_list = class_map.get(name + "virtual table");
+		}
 
 		System.out.println("t." + lable.toString() + " = this");
 
@@ -480,6 +529,32 @@ public class SecondVisit extends GJNoArguDepthFirst<Integer>{
 
 	public Integer visit(Identifier i){
 
+		if(add_map){
+			if(class_list.containsKey(i.f0.toString())){
+				function_map.put(curr_parameter_name, i.f0.toString());
+				return null;
+			}
+		}
+
+		if(fields_define){
+			if(class_list.containsKey(i.f0.toString())){
+				base_map.put(curr_parameter_name, i.f0.toString());
+				return null;
+			}
+		}
+
+		if(call_function){
+			if(base_map.containsKey(i.f0.toString())){
+				String name = base_map.get(i.f0.toString());
+				class_map = class_list.get(name);
+				method_list = class_map.get(name + "virtual table");
+			}
+			else if(function_map.containsKey(i.f0.toString())){
+				String name = function_map.get(i.f0.toString());
+				class_map = class_list.get(name);
+				method_list = class_map.get(name + "virtual table");
+			}
+		}
 		/////////////////////
 		//if map has identifier another treat
 		//should be departed into classmap and method map////
